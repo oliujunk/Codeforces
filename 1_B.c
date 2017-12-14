@@ -5,9 +5,9 @@
 int main(void)
 {
     int n;
-    char inArray[12] = {0};
-    char outArray[12] = {0};
-    char temp[12] = {0};
+    char inArray[15] = {0};
+    char outArray[15] = {0};
+    char temp[15] = {0};
     char *p1, *p2;
     int Col;
     int i, j;
@@ -18,7 +18,7 @@ int main(void)
         p1 = strstr(inArray, "R");
         p2 = strstr(inArray, "C");
         int temp1 = p2 - p1 - 1;
-        if(p1 != NULL && p2 != NULL && (p2-p1) > 1)
+        if(p1 != NULL && p2 != NULL && (p2-p1) > 1 && *(p1+1) <= '9' && *(p1+1) >= '0')
         {
             i = 0;
             j = 0;
@@ -33,7 +33,10 @@ int main(void)
                 else
                 {
                     temp[i++] = 'A' + (Col%26==0?26:Col%26) - 1;
-                    Col /= 26;
+                    if(Col%26==0)
+                        Col = Col/26-1;
+                    else
+                        Col = Col/26;
                 }
             }
             for(; i>0; i--)
