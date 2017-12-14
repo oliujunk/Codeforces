@@ -9,10 +9,14 @@ int main(void)
     double a[2], b[2], c[2];    //向量
     double cosA, cosB, cosC;    //角度余弦
     double angleA, angleB, angleC, DEG;    //角度
-    int n;  //正多边形的边数
+    double DEGArray[98];    //中心角
+    int i, j, k, l;
+    float n;  //正多边形的边数
     double an, temp[3];   //边长
     double S;   //面积
 
+    for(i=0; i<98; i++)
+        DEGArray[i] = 180 - 180.0*(i+1)/(double)(i+3);
 
     scanf("%lf %lf", &A[0], &A[1]);
     scanf("%lf %lf", &B[0], &B[1]);
@@ -29,12 +33,6 @@ int main(void)
     temp[1] = sqrt(b[0]*b[0] + b[1]*b[1]);
     temp[2] = sqrt(c[0]*c[0] + c[1]*c[1]);
 
-    if(fabs(temp[0] - temp[1]) < 0.001)
-        an = temp[0];
-    else if(fabs(temp[1] - temp[2]) < 0.001)
-        an = temp[1];
-    else
-        an = temp[2];
 
     cosA = (b[0]*c[0] + b[1]*c[1])/(temp[1] * temp[2]);
     cosB = (a[0]*c[0] + a[1]*c[1])/(temp[0] * temp[2]);
@@ -50,8 +48,34 @@ int main(void)
         DEG = angleB;
     else if(fabs(angleC - angleB) < 0.001 || fabs(angleC + angleB - 180) < 0.001)
         DEG = angleA;
+    else
+        for(i=0; i<98; i++)
+        {
+            DEG = DEGArray[i];
+            for(j=1; j<98; j++)
+                if(fabs(angleA/(DEG/2) - j) < 0.001)
+                    break;
+            for(k=1; k<98; k++)
+                if(fabs(angleB/(DEG/2) - k) < 0.001)
+                    break;
+            for(l=1; l<98; l++)
+                if(fabs(angleC/(DEG/2) - l) < 0.001)
+                    break;
+            if(j==98 || k==98 || l==98)
+                continue;
+            break;
+        }
 
-    n = 360/(180 - DEG);
+    if(fabs(temp[0] - temp[1]) < 0.001)
+        an = temp[0];
+    else if(fabs(temp[1] - temp[2]) < 0.001)
+        an = temp[1];
+    else if(fabs(temp[2] - temp[0]) < 0.001)
+        an = temp[2];
+    else
+        ;
+
+    n = 360.0/(180 - DEG);
 
     S = n/4.0*an*an*1.0/tan(M_PI/n);
     printf("%.8lf\n", S);
