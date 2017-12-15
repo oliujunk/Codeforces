@@ -33,7 +33,6 @@ int main(void)
     temp[1] = sqrt(b[0]*b[0] + b[1]*b[1]);
     temp[2] = sqrt(c[0]*c[0] + c[1]*c[1]);
 
-
     cosA = (b[0]*c[0] + b[1]*c[1])/(temp[1] * temp[2]);
     cosB = (a[0]*c[0] + a[1]*c[1])/(temp[0] * temp[2]);
     cosC = (b[0]*a[0] + b[1]*a[1])/(temp[1] * temp[0]);
@@ -42,40 +41,25 @@ int main(void)
     angleB = acos(cosB)*180/M_PI;
     angleC = acos(cosC)*180/M_PI;
 
-    if(fabs(angleA - angleB) < 0.001 || fabs(angleA + angleB - 180) < 0.001)
-        DEG = angleC;
-    else if(fabs(angleA - angleC) < 0.001 || fabs(angleA + angleC - 180) < 0.001)
-        DEG = angleB;
-    else if(fabs(angleC - angleB) < 0.001 || fabs(angleC + angleB - 180) < 0.001)
-        DEG = angleA;
-    else
-        for(i=0; i<98; i++)
-        {
-            DEG = DEGArray[i];
-            for(j=1; j<98; j++)
-                if(fabs(angleA/(DEG/2) - j) < 0.001)
-                    break;
-            for(k=1; k<98; k++)
-                if(fabs(angleB/(DEG/2) - k) < 0.001)
-                    break;
-            for(l=1; l<98; l++)
-                if(fabs(angleC/(DEG/2) - l) < 0.001)
-                    break;
-            if(j==98 || k==98 || l==98)
-                continue;
-            break;
-        }
+    for(i=0; i<98; i++)
+    {
+        DEG = DEGArray[i];
+        for(j=1; j<98; j++)
+            if(fabs(angleA/(DEG/2) - j) < 0.001)
+                break;
+        for(k=1; k<98; k++)
+            if(fabs(angleB/(DEG/2) - k) < 0.001)
+                break;
+        for(l=1; l<98; l++)
+            if(fabs(angleC/(DEG/2) - l) < 0.001)
+                break;
+        if(j==98 || k==98 || l==98)
+            continue;
+        break;
+    }
 
-    if(fabs(temp[0] - temp[1]) < 0.001)
-        an = temp[0];
-    else if(fabs(temp[1] - temp[2]) < 0.001)
-        an = temp[1];
-    else if(fabs(temp[2] - temp[0]) < 0.001)
-        an = temp[2];
-    else
-        ;
-
-    n = 360.0/(180 - DEG);
+    n = 360.0/DEG;
+    an = temp[2]*sin(DEG/2/180*M_PI)/sin(angleC/180*M_PI);
 
     S = n/4.0*an*an*1.0/tan(M_PI/n);
     printf("%.8lf\n", S);
