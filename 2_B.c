@@ -17,7 +17,8 @@ int main(void)
     }
 
     int temp = 0;
-
+    int flag = 0;   //矩阵中是否包含0
+    int p = 0, q = 0;   //记录第一个0的位置
     for(i=0; i<n; i++)
     {
         for(j=0; j<n; j++)
@@ -26,6 +27,12 @@ int main(void)
             matrix[i][j][1] = 0;
             matrix[i][j][2] = 0;
             temp = matrix[i][j][0];
+            if(temp == 0)
+            {
+                flag = 1;
+                p = i;
+                q = j;
+            }
             for(; temp>0; )
             {
                 if(temp%5 == 0)
@@ -100,38 +107,57 @@ int main(void)
         }
     }
 
-    for(i=0, m=0, k=0; i<(n-1)*2; i++)
+    int tailingZero = 0;
+    if(matrix[0][0][1] > matrix[0][0][2])
     {
-        if(m>=n)
-        {
-            for(; i<(n-1)*2; i++)
-                trace[i] = 'R';
+        tailingZero = matrix[0][0][2];
+        temp = 2;
+    }
+    else
+    {
+        tailingZero = matrix[0][0][1];
+        temp = 1;
+    }
 
-            break;
-        }
-        if(k>=n)
+    m = 0;
+    k = 0;
+    for(i=0; i<2*(n-1); i++)
+    {
+        if(k+1 == n)
         {
-            for(; i<(n-1)*2; i++)
+            for(;i<2*(n-1); i++)
                 trace[i] = 'D';
-
             break;
         }
-
-        if(matrix[m+1][k][1] + matrix[m+1][k][2] <= matrix[m][k+1][1] + matrix[m][k+1][2])
+        if(m+1 == n)
         {
-            trace[i] = 'D';
-            m = m+1;
+            for(;i<2*(n-1); i++)
+                trace[i] = 'R';
+            break;
+        }
+        if(matrix[m][k+1][temp] < matrix[m+1][k][temp])
+        {
+            trace[i] = 'R';
+            k = k + 1;
         }
         else
         {
-            trace[i] = 'R';
-            k = k+1;
+            trace[i] = 'D';
+            m = m + 1;
         }
     }
 
-    int tailingZero = 0;
 
-
+    if(tailingZero >= 1 && flag == 1)
+    {
+        tailingZero = 1;
+        for(i=0; i<p; i++)
+            trace[i] = 'R';
+        for(j=0; j<n; j++)
+            trace[i++] = 'D';
+        for(;i<2*(n-1);)
+            trace[i++] = 'R';
+    }
 
     printf("%d\n", tailingZero);
     printf("%s\n", trace);
