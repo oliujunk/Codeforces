@@ -7,8 +7,8 @@ typedef struct {
     int inputIndex;
 }VehicleSt;
 
-//冒泡，降序
-void Sort(VehicleSt *array, int length)
+//冒泡排序，降序
+void bubbleSort(VehicleSt *array, int length)
 {
     int  i, j;
     VehicleSt temp;
@@ -25,13 +25,41 @@ void Sort(VehicleSt *array, int length)
         }
     }
 }
+//快速排序，降序
+void quickSort(VehicleSt *a, int left, int right)
+{
+    if(left >= right)
+        return;
+
+    int i = left;
+    int j = right;
+	VehicleSt temp;
+	memcpy(&temp, &a[left], sizeof(VehicleSt));
+    while(i < j)
+    {
+        while(i < j && temp.capacity >= a[j].capacity)
+            j--;
+
+		memcpy(&a[i], &a[j], sizeof(VehicleSt));
+        while(i < j && temp.capacity <= a[i].capacity)
+            i++;
+
+		memcpy(&a[j], &a[i], sizeof(VehicleSt));
+    }
+
+	memcpy(&a[i], &temp, sizeof(VehicleSt));
+    quickSort(a, left, i - 1);
+    quickSort(a, i + 1, right);
+}
+
 
 int main(void)
 {
-
     int n, v, i;
     int j=0, k=0;
     int numOfKayak=0,  numOfCatamaran=0;
+//    freopen("C:\\Users\\XPH\\Desktop\\input2.txt", "r", stdin);
+//    freopen("C:\\Users\\XPH\\Desktop\\output.txt", "w", stdout);
     scanf("%d %d", &n, &v);
     VehicleSt *vehicle = (VehicleSt *)malloc(sizeof(VehicleSt)*n);
     VehicleSt *vehicleKayak = (VehicleSt *)malloc(sizeof(VehicleSt)*n);
@@ -52,14 +80,21 @@ int main(void)
         }
     }
 
-    Sort(vehicleKayak, j);
-    Sort(vehicleCatamaran, k);
+//    bubbleSort(vehicleKayak, j);
+//    bubbleSort(vehicleCatamaran, k);
 
-    int maxCapacity = 0;
+    quickSort(vehicleKayak, 0, j-1);
+    quickSort(vehicleCatamaran, 0, k-1);
 
-    for(i=0,j=0,k=0; v>0;)
+    unsigned int maxCapacity = 0;
+
+    for(i=0,j=0,k=0; v>0 && j<=numOfKayak && k<=numOfCatamaran;)
     {
-        if(j<numOfKayak && (vehicleKayak[j].capacity >= vehicleCatamaran[k].capacity || k>=numOfCatamaran || v == 1))
+        if(j<numOfKayak
+            && (v == 1
+                || k>=numOfCatamaran
+                || vehicleKayak[j].capacity >= vehicleCatamaran[k].capacity
+                || (j+1<numOfKayak && vehicleKayak[j].capacity + vehicleKayak[j+1].capacity > vehicleCatamaran[k].capacity)))
         {
             memcpy(&vehicle[i], &vehicleKayak[j], sizeof(VehicleSt));
             maxCapacity += vehicleKayak[j].capacity;
@@ -67,7 +102,7 @@ int main(void)
             j++;
             v--;
         }
-        else if(v>=2 && k<numOfCatamaran && (vehicleCatamaran[k].capacity >= vehicleKayak[j].capacity + vehicleKayak[j+1].capacity || j+1>=numOfKayak))
+        else if(v>=2 && k<numOfCatamaran && (j+1>=numOfKayak || j>=numOfKayak || vehicleCatamaran[k].capacity >= vehicleKayak[j].capacity + vehicleKayak[j+1].capacity))
         {
             memcpy(&vehicle[i], &vehicleCatamaran[k], sizeof(VehicleSt));
             maxCapacity += vehicleCatamaran[k].capacity;
@@ -75,21 +110,28 @@ int main(void)
             i++;
             v -= 2;
         }
-        else if(v>=2)
+        else
         {
-            memcpy(&vehicle[i], &vehicleKayak[j], sizeof(VehicleSt));
-            memcpy(&vehicle[i+1], &vehicleKayak[j+1], sizeof(VehicleSt));
-            maxCapacity = maxCapacity + vehicleKayak[j].capacity + vehicleKayak[j+1].capacity;
-            i += 2;
-            j += 2;
-            v -= 2;
+            break;
         }
     }
 
-    printf("%d\n", maxCapacity);
-    for(j=0; j<i-1; j++)
-        printf("%d ", vehicle[j].inputIndex);
-    printf("%d\n", vehicle[i-1].inputIndex);
+    if(maxCapacity>0)
+    {
+        printf("%u\n", maxCapacity);
+        for(j=0; j<i-1; j++)
+            printf("%d ", vehicle[j].inputIndex);
+        printf("%d\n", vehicle[i-1].inputIndex);
+    }
+    else
+    {
+        printf("%u\n", maxCapacity);
+        printf("\n");
+    }
+
+    free(vehicle);
+    free(vehicleKayak);
+    free(vehicleCatamaran);
 
     return 0;
 }
