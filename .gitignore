@@ -1,6 +1,2 @@
-*
-
-!*.c
-!*.h
-!.gitignore
-!.vscode/
+*.out
+*.exe
