@@ -25,7 +25,7 @@ cost make(int p, int v) {
 
 char str[50004];
 int main() {
-    freopen("C:\\Users\\XPH\\Desktop\\input.txt", "r", stdin);
+    freopen("C:\\Users\\XPH\\Desktop\\input2.txt", "r", stdin);
     freopen("C:\\Users\\XPH\\Desktop\\output.txt", "w", stdout);
     scanf("%s", str);
     int cnt = 0;

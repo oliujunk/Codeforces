@@ -4,33 +4,34 @@
 
 typedef struct
 {
-    int leftCost;
-    int rightCost;
     int DCost;
     int inputIndex;
 } QuestionMaskSt;
 
 typedef struct Node
 {
-    struct Node *pLast;
     QuestionMaskSt data;
     struct Node *pNext;
 } NODE, *PNODE;
 
-void insertList(PNODE list, PNODE node);
+void insertList(PNODE list, QuestionMaskSt data);
+QuestionMaskSt deleteNode(PNODE list);
 
 int main(void)
 {
     char inputArray[50001];
-    freopen("C:\\Users\\XPH\\Desktop\\input.txt", "r", stdin);
+    freopen("C:\\Users\\XPH\\Desktop\\input2.txt", "r", stdin);
     freopen("C:\\Users\\XPH\\Desktop\\output.txt", "w", stdout);
     scanf("%s", inputArray);
 
     int i = 0;
     long long minCost = 0;
     int count = 0;
+    int leftCost, rightCost;
     PNODE list = (PNODE)malloc(sizeof(NODE));   //创建一个头结点，头结点不存放数据
+    list->data.DCost = 2147483637;
     list->pNext = NULL;
+    QuestionMaskSt cost;
     for (i = 0; i < strlen(inputArray); i++)
     {
         if (inputArray[i] == '(')
@@ -39,22 +40,20 @@ int main(void)
             count--;
         else
         {
-            PNODE p = (PNODE)malloc(sizeof(NODE));
-            p->pNext = NULL;
-            scanf("%d %d", &p->data.leftCost, &p->data.rightCost);
-            p->data.DCost = p->data.rightCost - p->data.leftCost;
-            p->data.inputIndex = i;
+            scanf("%d %d", &leftCost, &rightCost);
+            cost.DCost = rightCost - leftCost;
+            cost.inputIndex = i;
             inputArray[i] = ')';
             count--;
-            minCost += p->data.rightCost;
-            insertList(list, p);
-            free(p);
+            minCost += rightCost;
+            insertList(list, cost);
         }
 
         if (count < 0)
         {
-            // inputArray[costArray[k].inputIndex] = '(';
-            // minCost -= costArray[k].DCost;
+            cost = deleteNode(list);
+            inputArray[cost.inputIndex] = '(';
+            minCost -= cost.DCost;
             count += 2;
         }
     }
@@ -68,23 +67,24 @@ int main(void)
 }
 
 //按降序插入链表
-void insertList(PNODE list, PNODE node)
+void insertList(PNODE list, QuestionMaskSt data)
 {
-    PNODE addNode = (PNODE)malloc(sizeof(NODE));
-    addNode = node;
-    PNODE tempNode = list;
-    while(tempNode->pNext != NULL)
+    PNODE p, q;
+    p = list;
+    while(p != NULL && p->pNext != NULL && data.DCost < p->pNext->data.DCost)
     {
-        if(addNode->data.DCost >= tempNode->data.DCost)
-        {
-            tempNode->pLast = addNode;
-            addNode->pNext = tempNode;
-            return;
-        }
-        else
-        {
-            tempNode = tempNode->pNext;
-        }
+        p = p->pNext;
     }
-    tempNode->pNext = addNode;
+    q = (PNODE)malloc(sizeof(NODE));
+    q->data = data;
+    q->pNext = p->pNext;
+    p->pNext = q;
+}
+
+QuestionMaskSt deleteNode(PNODE list)
+{
+    QuestionMaskSt data;
+    data = list->pNext->data;
+    list->pNext = list->pNext->pNext;
+    return data;
 }
