@@ -10,12 +10,13 @@ typedef struct
 int main(void)
 {
     int n;
-    int i, j;
-    freopen("C:\\Users\\XPH\\Desktop\\input.txt", "r", stdin);
-    NameSt nameArray[50000];
+    int i, j, k;
+    //freopen("C:\\Users\\XPH\\Desktop\\input.txt", "r", stdin);
+    NameSt nameArray[100000];
     scanf("%d", &n);
     for (i = 0; i < n; i++)
     {
+        k = i;
         scanf("%s", nameArray[i].name);
         for (j = 0; j < i; j++)
         {
@@ -24,13 +25,12 @@ int main(void)
                 nameArray[j].sameNameNum++;
                 n--;
                 i--;
+                printf("%s%d\n", nameArray[j].name, nameArray[j].sameNameNum);
                 break;
             }
         }
-        if (j == i)
+        if (i == k)
             printf("OK\n");
-        else
-            printf("%s%n\n", nameArray[i].name, nameArray[i].sameNameNum);
     }
     return 0;
 }
